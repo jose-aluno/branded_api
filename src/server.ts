@@ -1,5 +1,9 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
+import { prisma } from './utils/prisma.js';
 
 const app = express();
 const PORT = 3000;
@@ -10,8 +14,8 @@ app.use(cors({
     origin: 'http://localhost:4200' 
 }));
 
-app.get('/', (req, res) => {
-    res.json({ mensagem: 'API Express rodando' });
+app.get('/', async (req, res) => {
+    res.json(await prisma.user.findMany());
 });
 
 app.listen(PORT, () => {
