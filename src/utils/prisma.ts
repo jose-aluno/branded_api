@@ -1,3 +1,15 @@
 import { PrismaClient } from "../generated/prisma/client.js";
+declare global { var db: PrismaClient | undefined; }
 
-export const prisma = new PrismaClient();
+let db: PrismaClient;
+
+if (process.env.NODE_ENV === 'production') {
+  db = new PrismaClient();
+} else {
+  if (!global.db) {
+    global.db = new PrismaClient();
+  }
+  db = global.db;
+}
+
+export const prisma = db;
