@@ -32,7 +32,7 @@ export class ProductService {
     return await this.productRepository.deleteById(id!);
   }
 
-  validarId(id: string | undefined): void{
+  private validarId(id: string | undefined): void{
     if (typeof id !== "string" || !id.trim()) {
       throw new Error("ID inválido");
     }
