@@ -8,34 +8,33 @@ export class ProductService {
     return await this.productRepository.findAll();
   }
 
-  async findById(id: string | undefined): 
-    Promise<Product> {
-      this.validarId(id);
-      const product = await this.productRepository.findById(id!);
-  
-      if(!product){
-        throw new Error("Produto não encontrado");
-      }
-      return product;
-    }
+  async findById(id: string | undefined): Promise<Product> {
+    this.validarId(id);
+    const product = await this.productRepository.findById(id!);
 
-    async createProduct(userData: Prisma.ProductCreateInput): Promise<Product | null>{
-      return await this.productRepository.createProduct(userData);
+    if(!product){
+      throw new Error("Produto não encontrado");
     }
+    return product;
+  }
 
-     async updateProduct(id: string | undefined, productData: Prisma.ProductUpdateInput): Promise<Product | null>{
-      this.validarId(id);
-      return await this.productRepository.updateProduct(id!, productData);
-    }
+  async createProduct(userData: Prisma.ProductCreateInput): Promise<Product | null> {
+    return await this.productRepository.createProduct(userData);
+  }
 
-    async deleteById(id: string | undefined): Promise<Product | null> {
-      this.validarId(id);
-      return await this.productRepository.deleteById(id!);
-    }
+  async updateProduct(id: string | undefined, productData: Prisma.ProductUpdateInput): Promise<Product | null> {
+    this.validarId(id);
+    return await this.productRepository.updateProduct(id!, productData);
+  }
 
-    validarId(id: string | undefined): void{
-      if (typeof id !== "string" || !id.trim()) {
-        throw new Error("ID inválido");
-      }
+  async deleteById(id: string | undefined): Promise<Product | null> {
+    this.validarId(id);
+    return await this.productRepository.deleteById(id!);
+  }
+
+  validarId(id: string | undefined): void{
+    if (typeof id !== "string" || !id.trim()) {
+      throw new Error("ID inválido");
     }
+  }
 }

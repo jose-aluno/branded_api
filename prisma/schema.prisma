@@ -34,6 +34,7 @@ model Product{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   name String
   description String
+  artist String
   price Float
   imageUrl String
   stock Int
