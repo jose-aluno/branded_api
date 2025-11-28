@@ -10,8 +10,8 @@ datasource db {
 
 model User {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String
   name  String
+  email String
   password String
   address Address?
   orders Order[]
@@ -22,8 +22,8 @@ model Address{
   cep String
   city String
   state String
-  street String
   neighborhood String
+  street String
   houseNumber String
   aptNumber String?
   userId String? @unique @db.ObjectId

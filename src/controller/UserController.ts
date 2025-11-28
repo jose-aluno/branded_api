@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserService } from "../service/userService.js";
+import { UserService } from "../service/UserService.js";
 
 export class UserController{
   private userService = new UserService();
@@ -35,7 +35,7 @@ export class UserController{
     }
   }
 
-  async cadastrarUsuario(req: Request, res: Response): Promise<void> {
+  async createUser(req: Request, res: Response): Promise<void> {
     try {
       const user = await this.userService.createUser(req.body);
       res.status(201).json({
@@ -53,7 +53,7 @@ export class UserController{
     }
   }
 
-  async atualizarUsuario(req: Request, res: Response): Promise<void> {
+  async updateUser(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const user = await this.userService.updateUser(id, req.body);
@@ -72,7 +72,7 @@ export class UserController{
     }
   }
 
-  async removerUsuario(req: Request, res: Response): Promise<void> {
+  async deleteById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const user = await this.userService.deleteById(id);
