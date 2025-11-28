@@ -4,9 +4,11 @@ import express from 'express';
 import cors from 'cors';
 import { UserController } from './controller/UserController.js';
 import { ProductController } from './controller/ProductController.js';
+import { AddressController } from './controller/AddressController.js';
 
 const userController = new UserController();
 const productController = new ProductController();
+const addressController = new AddressController();
 const app = express();
 const PORT = 3000;
 app.use(express.json());
@@ -26,5 +28,11 @@ app.get("/branded/products/:id", productController.findById.bind(productControll
 app.post("/branded/products", productController.createProduct.bind(productController));
 app.put("/branded/products/:id", productController.updateProduct.bind(productController));
 app.delete("/branded/products/:id", productController.deleteById.bind(productController));
+
+app.get("/branded/address", addressController.findAll.bind(addressController));
+app.get("/branded/address/:id", addressController.findById.bind(addressController));
+app.post("/branded/address", addressController.createAddress.bind(addressController));
+app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
+app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
 
 app.listen(PORT, () => { console.log(`Servidor rodando em http://localhost:${PORT}`)});
