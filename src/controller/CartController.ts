@@ -5,10 +5,10 @@ export class CartController{
   private cartService = new CartService();
 
 
-  async findById(req: Request, res: Response): Promise<void> {
+  async findByUserId(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      const cart = await this.cartService.findById(id);
+      const { userId } = req.params;
+      const cart = await this.cartService.findById(userId);
       res.status(200).json(cart);
     } catch (error: unknown) {
       let message = "Não foi possível encontrar o carrinho com esse id!";

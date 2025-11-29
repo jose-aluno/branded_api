@@ -11,8 +11,8 @@
       return this.instance;
     }
 
-    async findById(id: string): Promise<Cart | null> {
-      return await prisma.cart.findUnique({where: {id}});
+    async findByUserId(userId: string): Promise<Cart | null> {
+      return await prisma.cart.findUnique({where: { userId }});
     }
 
     async createCart(cartData: Prisma.CartCreateInput): Promise<Cart | null> {
