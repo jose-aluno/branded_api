@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CartService } from "../service/CartService.js";
 
-export class CartItemController{
+export class CartController{
   private cartService = new CartService();
 
 
@@ -25,7 +25,7 @@ export class CartItemController{
     try {
       const cart = await this.cartService.createCart(req.body);
       res.status(201).json({
-        message: "Carrinho cadastrado com sucesso no carrinho!",
+        message: "Carrinho cadastrado com sucesso!",
         cart: cart,
       });
     } catch (error: unknown) {

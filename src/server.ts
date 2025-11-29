@@ -6,10 +6,12 @@ import { UserController } from './controller/UserController.js';
 import { ProductController } from './controller/ProductController.js';
 import { AddressController } from './controller/AddressController.js';
 import { CartItemController } from './controller/ItemCartController.js';
+import { CartController } from './controller/CartController.js';
 
 const userController = new UserController();
 const productController = new ProductController();
 const addressController = new AddressController();
+const cartController = new CartController();
 const cartItemController = new CartItemController();
 
 const app = express();
@@ -37,6 +39,10 @@ app.get("/branded/address/:id", addressController.findById.bind(addressControlle
 app.post("/branded/address", addressController.createAddress.bind(addressController));
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
+
+app.get("/branded/cart/:id", cartController.findById.bind(cartController));
+app.post("/branded/cart", cartController.createCart.bind(cartController));
+app.put("/branded/cart/:id", cartController.updateCart.bind(cartController));
 
 app.get("/branded/cartItem", cartItemController.findAll.bind(cartItemController));
 app.get("/branded/cartItem/:id", cartItemController.findById.bind(cartItemController));
