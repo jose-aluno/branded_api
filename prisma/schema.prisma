@@ -15,6 +15,7 @@ model User {
   password String
   address Address?
   orders Order[]
+  cart Cart?
 }
 
 model Address{
@@ -43,10 +44,21 @@ model Product{
 
 model CartItem{
   id String @id @default(auto()) @map ("_id") @db.ObjectId
+  quantity Int
   productId String @unique @db.ObjectId
   product Product @relation(fields: [productId], references: [id])
   orderId String? @db.ObjectId
   order Order? @relation(fields: [orderId], references: [id])
+  cartId String? @db.ObjectId
+  cart Cart? @relation(fields: [cartId], references: [id])
+}
+
+model Cart {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  totalValue Float
+  userId String @unique @db.ObjectId
+  user User @relation(fields: [userId], references: [id])
+  items CartItem[]
 }
 
 model Order{
