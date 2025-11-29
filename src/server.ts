@@ -5,10 +5,13 @@ import cors from 'cors';
 import { UserController } from './controller/UserController.js';
 import { ProductController } from './controller/ProductController.js';
 import { AddressController } from './controller/AddressController.js';
+import { CartItemController } from './controller/ItemCartController.js';
 
 const userController = new UserController();
 const productController = new ProductController();
 const addressController = new AddressController();
+const cartItemController = new CartItemController();
+
 const app = express();
 const PORT = 3000;
 app.use(express.json());
@@ -34,5 +37,11 @@ app.get("/branded/address/:id", addressController.findById.bind(addressControlle
 app.post("/branded/address", addressController.createAddress.bind(addressController));
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
+
+app.get("/branded/cartItem", cartItemController.findAll.bind(cartItemController));
+app.get("/branded/cartItem/:id", cartItemController.findById.bind(cartItemController));
+app.post("/branded/cartItem", cartItemController.createCartItem.bind(cartItemController));
+app.put("/branded/cartItem/:id", cartItemController.updateCartItem.bind(cartItemController));
+app.delete("/branded/cartItem/:id", cartItemController.deleteById.bind(cartItemController));
 
 app.listen(PORT, () => { console.log(`Servidor rodando em http://localhost:${PORT}`)});
