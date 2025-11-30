@@ -47,7 +47,7 @@ app.post("/branded/cart", cartController.createCart.bind(cartController));
 app.put("/branded/cart/:id", cartController.updateCart.bind(cartController));
 
 app.get("/branded/orders/:userId", orderController.findByUserId.bind(orderController));
-app.post("/branded/orders", orderController.createOrder.bind(cartController));
+app.post("/branded/orders", orderController.createOrder.bind(orderController));
 
 app.get("/branded/cartItem", cartItemController.findAll.bind(cartItemController));
 app.get("/branded/cartItem/:id", cartItemController.findById.bind(cartItemController));
