@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  email String
+  password String
+  address Address?
+  orders Order[]
+  cart Cart?
+}
+
+model Address{
+  id  String @id @default(auto()) @map ("_id") @db.ObjectId
+  cep String
+  city String
+  state String
+  neighborhood String
+  street String
+  houseNumber String
+  aptNumber String?
+  userId String? @unique @db.ObjectId
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Product{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  description String
+  artist String
+  price Float
+  imageUrl String
+  stock Int
+  cartItem CartItem?
+}
+
+model CartItem{
+  id String @id @default(auto()) @map ("_id") @db.ObjectId
+  quantity Int
+  productId String @unique @db.ObjectId
+  product Product @relation(fields: [productId], references: [id])
+  orderId String? @db.ObjectId
+  order Order? @relation(fields: [orderId], references: [id])
+  cartId String? @db.ObjectId
+  cart Cart? @relation(fields: [cartId], references: [id])
+}
+
+model Cart {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  totalValue Float
+  userId String @unique @db.ObjectId
+  user User @relation(fields: [userId], references: [id])
+  items CartItem[]
+}
+
+model Order{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  totalValue Float
+  createdAt DateTime @default(now())
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id])
+  items CartItem[]
+}
