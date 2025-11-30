@@ -7,11 +7,13 @@ import { ProductController } from './controller/ProductController.js';
 import { AddressController } from './controller/AddressController.js';
 import { CartItemController } from './controller/ItemCartController.js';
 import { CartController } from './controller/CartController.js';
+import { OrderController } from './controller/OrderController.js';
 
 const userController = new UserController();
 const productController = new ProductController();
 const addressController = new AddressController();
 const cartController = new CartController();
+const orderController = new OrderController();
 const cartItemController = new CartItemController();
 
 const app = express();
@@ -40,9 +42,12 @@ app.post("/branded/address", addressController.createAddress.bind(addressControl
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
 
-app.get("/branded/cart/:id", cartController.findById.bind(cartController));
+app.get("/branded/cart/:userId", cartController.findByUserId.bind(cartController));
 app.post("/branded/cart", cartController.createCart.bind(cartController));
 app.put("/branded/cart/:id", cartController.updateCart.bind(cartController));
+
+app.get("/branded/orders/:userId", orderController.findByUserId.bind(orderController));
+app.post("/branded/orders", orderController.createOrder.bind(cartController));
 
 app.get("/branded/cartItem", cartItemController.findAll.bind(cartItemController));
 app.get("/branded/cartItem/:id", cartItemController.findById.bind(cartItemController));
