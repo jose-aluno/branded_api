@@ -1,4 +1,4 @@
-import { Prisma, Product } from "../generated/prisma/index.js";
+import { Prisma, Product } from "@prisma/client";
 import { ProductRepository } from "../repository/ProductRepository.js";
 
 export class ProductService {
@@ -12,7 +12,7 @@ export class ProductService {
     this.validarId(id);
     const product = await this.productRepository.findById(id!);
 
-    if(!product){
+    if (!product) {
       throw new Error("Produto não encontrado");
     }
     return product;
@@ -32,7 +32,7 @@ export class ProductService {
     return await this.productRepository.deleteById(id!);
   }
 
-  private validarId(id: string | undefined): void{
+  private validarId(id: string | undefined): void {
     if (typeof id !== "string" || !id.trim()) {
       throw new Error("ID inválido");
     }

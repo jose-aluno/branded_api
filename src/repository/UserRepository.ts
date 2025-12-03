@@ -1,7 +1,7 @@
-import { Prisma, User } from "../generated/prisma/client.js";
-import { prisma } from "../utils/prisma.js"
+import { Prisma, User } from "@prisma/client";
+import { prisma } from "../utils/prisma.js";
 
-export class UserRepository{
+export class UserRepository {
   private static instance: UserRepository;
 
   static getInstance(): UserRepository {
@@ -16,23 +16,23 @@ export class UserRepository{
   }
 
   async findById(id: string): Promise<User | null> {
-    return await prisma.user.findUnique({where: {id}});
+    return await prisma.user.findUnique({ where: { id } });
   }
 
   async createUser(userData: Prisma.UserCreateInput): Promise<User | null> {
-    const user = await prisma.user.create({data: userData});
+    const user = await prisma.user.create({ data: userData });
     console.log("Usuário criado com sucesso: ", user);
     return user;
   }
 
   async updateUser(id: string, userData: Prisma.UserUpdateInput): Promise<User | null> {
-    const updatedUser = await prisma.user.update({where: {id}, data: userData});
+    const updatedUser = await prisma.user.update({ where: { id }, data: userData });
     console.log("Usuário atualizado com sucesso: ", updatedUser);
     return updatedUser;
   }
 
   async deleteById(id: string): Promise<User | null> {
-    const deletedUser = await prisma.user.delete({where: {id}});
+    const deletedUser = await prisma.user.delete({ where: { id } });
     console.log("Usuário removido com sucesso: ", deletedUser);
     return deletedUser;
   }

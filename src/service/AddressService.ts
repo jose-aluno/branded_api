@@ -1,4 +1,4 @@
-import { Prisma, Address } from "../generated/prisma/index.js";
+import { Prisma, Address } from "@prisma/client";
 import { AddressRepository } from "../repository/AddressRepository.js";
 
 export class AddressService {

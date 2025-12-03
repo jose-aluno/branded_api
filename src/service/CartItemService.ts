@@ -1,4 +1,4 @@
-import { Prisma, CartItem } from "../generated/prisma/index.js";
+import { Prisma, CartItem } from "@prisma/client";
 import { CartItemRepository } from "../repository/CartItemRepository.js";
 
 export class CartItemService {
@@ -12,7 +12,7 @@ export class CartItemService {
     this.validarId(id);
     const cartItem = await this.cartItemRepository.findById(id!);
 
-    if(!cartItem){
+    if (!cartItem) {
       throw new Error("Item do carrinho não encontrado");
     }
     return cartItem;
@@ -44,7 +44,7 @@ export class CartItemService {
     return await this.cartItemRepository.deleteById(id!);
   }
 
-  private validarId(id: string | undefined): void{
+  private validarId(id: string | undefined): void {
     if (typeof id !== "string" || !id.trim()) {
       throw new Error("ID inválido");
     }
