@@ -38,9 +38,14 @@ export class UserController{
   async createUser(req: Request, res: Response): Promise<void> {
     try {
       const user = await this.userService.createUser(req.body);
+      if (!user) {
+        throw new Error("Erro ao criar usuário no banco de dados.");
+      }
+
+      const { password, ...userWithoutPassword } = user;
       res.status(201).json({
         message: "Usuário cadastrado com sucesso!",
-        user: user,
+        user: userWithoutPassword,
       });
     } catch (error: unknown) {
       let message = "Não foi possível cadastrar usuário!";
@@ -50,6 +55,24 @@ export class UserController{
       res.status(400).json({
         message: message,
       });
+    }
+  }
+
+  async login(req:Request,res:Response): Promise<void>{
+    try{
+      const {token,user} = await this.userService.login(req.body);
+      res.status(200).json({
+        message: "Login realizado com sucesso!",
+        token: token,
+        userId: user.id,
+        userName: user.name
+      })
+    }catch(error: unknown){
+      let message = "Erro no login";
+      if(error instanceof Error){
+        message = error.message;
+      }
+      res.status(401).json({message: message});
     }
   }
 
