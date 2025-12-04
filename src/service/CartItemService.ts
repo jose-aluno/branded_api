@@ -4,43 +4,65 @@ import { CartItemRepository } from "../repository/CartItemRepository.js";
 export class CartItemService {
   private cartItemRepository = CartItemRepository.getInstance();
 
-  async findAll(): Promise<CartItem[]> {
-    return await this.cartItemRepository.findAll();
+ async findAllByUserId(userId: string | undefined): Promise<CartItem[]> {
+    if (!userId) throw new Error("Usuário não identificado.");
+    return await this.cartItemRepository.findAllByUserId(userId);
   }
 
-  async findById(id: string | undefined): Promise<CartItem> {
+  async findById(id: string | undefined, userId: string | undefined): Promise<CartItem> {
     this.validarId(id);
-    const cartItem = await this.cartItemRepository.findById(id!);
+    if (!userId) throw new Error("Usuário não identificado.");
+
+    const cartItem = await this.cartItemRepository.findByIdAndUserId(id!, userId);
 
     if (!cartItem) {
-      throw new Error("Item do carrinho não encontrado");
+      throw new Error("Item do carrinho não encontrado ou acesso negado.");
     }
     return cartItem;
   }
 
-  async createCartItem(cartItemData: Prisma.CartItemCreateInput): Promise<CartItem | null> {
-    return await this.cartItemRepository.createCartItem(cartItemData);
-  }
+async createCartItem(data: { productId: string; quantity: number; userId: string }): Promise<CartItem> {
+    if (!data.userId) throw new Error("Usuário não identificado.");
 
-  async updateCartItem(id: string | undefined, cartItemData: Prisma.CartItemUpdateInput): Promise<CartItem | null> {
-    this.validarId(id);
+    let cart = await this.cartItemRepository.findCartByUserId(data.userId);
 
-    const exists = await this.cartItemRepository.findById(id!);
-    if (!exists) {
-      throw new Error("Item do carrinho não encontrado");
+    if (!cart) {
+      cart = await this.cartItemRepository.createCartForUser(data.userId);
     }
 
-    return await this.cartItemRepository.updateCartItem(id!, cartItemData);
+    const prismaData: Prisma.CartItemCreateInput = {
+      quantity: data.quantity,
+      cart: { connect: { id: cart.id } },
+      product: { connect: { id: data.productId } }
+    };
+
+    return await this.cartItemRepository.createCartItem(prismaData);
   }
 
-  async deleteById(id: string | undefined): Promise<CartItem | null> {
+  async updateCartItem(
+    id: string | undefined, 
+    userId: string | undefined, 
+    data: Prisma.CartItemUpdateInput
+  ): Promise<CartItem> {
     this.validarId(id);
+    if (!userId) throw new Error("Usuário não identificado.");
 
-    const exists = await this.cartItemRepository.findById(id!);
+    const exists = await this.cartItemRepository.findByIdAndUserId(id!, userId);
     if (!exists) {
-      throw new Error("Item do carrinho não encontrado");
+      throw new Error("Item não encontrado ou você não tem permissão para alterá-lo.");
     }
 
+    return await this.cartItemRepository.updateCartItem(id!, data);
+  }
+
+  async deleteById(id: string | undefined, userId: string | undefined): Promise<CartItem> {
+    this.validarId(id);
+    if (!userId) throw new Error("Usuário não identificado.");
+
+    const exists = await this.cartItemRepository.findByIdAndUserId(id!, userId);
+    if (!exists) {
+      throw new Error("Item não encontrado ou você não tem permissão para removê-lo.");
+    }
     return await this.cartItemRepository.deleteById(id!);
   }
 
