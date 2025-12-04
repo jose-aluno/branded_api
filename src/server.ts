@@ -8,6 +8,7 @@ import { AddressController } from './controller/AddressController.js';
 import { CartItemController } from './controller/ItemCartController.js';
 import { CartController } from './controller/CartController.js';
 import { OrderController } from './controller/OrderController.js';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
 const userController = new UserController();
 const productController = new ProductController();
@@ -27,6 +28,7 @@ app.use(cors({
 app.get("/branded/users", userController.findAll.bind(userController));
 app.get("/branded/users/:id", userController.findById.bind(userController));
 app.post("/branded/users", userController.createUser.bind(userController));
+app.post("/branded/login", userController.login.bind(userController));
 app.put("/branded/users/:id", userController.updateUser.bind(userController));
 app.delete("/branded/users/:id", userController.deleteById.bind(userController));
 
@@ -42,17 +44,17 @@ app.post("/branded/address", addressController.createAddress.bind(addressControl
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
 
-app.get("/branded/cart/:userId", cartController.findByUserId.bind(cartController));
-app.post("/branded/cart", cartController.createCart.bind(cartController));
-app.put("/branded/cart/:id", cartController.updateCart.bind(cartController));
+app.get("/branded/cart/:userId", authMiddleware, cartController.findByUserId.bind(cartController));
+app.post("/branded/cart", authMiddleware, cartController.createCart.bind(cartController));
+app.put("/branded/cart/:id",authMiddleware, cartController.updateCart.bind(cartController));
 
-app.get("/branded/orders/:userId", orderController.findByUserId.bind(orderController));
-app.post("/branded/orders", orderController.createOrder.bind(orderController));
+app.get("/branded/orders/:userId",authMiddleware, orderController.findByUserId.bind(orderController));
+app.post("/branded/orders",authMiddleware, orderController.createOrder.bind(orderController));
 
-app.get("/branded/cartItem", cartItemController.findAll.bind(cartItemController));
-app.get("/branded/cartItem/:id", cartItemController.findById.bind(cartItemController));
-app.post("/branded/cartItem", cartItemController.createCartItem.bind(cartItemController));
-app.put("/branded/cartItem/:id", cartItemController.updateCartItem.bind(cartItemController));
-app.delete("/branded/cartItem/:id", cartItemController.deleteById.bind(cartItemController));
+app.get("/branded/cartItem",authMiddleware, cartItemController.findAll.bind(cartItemController));
+app.get("/branded/cartItem/:id",authMiddleware, cartItemController.findById.bind(cartItemController));
+app.post("/branded/cartItem",authMiddleware, cartItemController.createCartItem.bind(cartItemController));
+app.put("/branded/cartItem/:id",authMiddleware, cartItemController.updateCartItem.bind(cartItemController));
+app.delete("/branded/cartItem/:id",authMiddleware, cartItemController.deleteById.bind(cartItemController));
 
 app.listen(PORT, () => { console.log(`Servidor rodando em http://localhost:${PORT}`)});
