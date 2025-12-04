@@ -53,7 +53,7 @@ export class UserService {
       }
     };
 
-    return await this.userRepository.createUser(userData);
+    return await this.userRepository.createUser(userCreateInput);
   }
 
   async login(loginData: any): Promise<LoginResponse>{

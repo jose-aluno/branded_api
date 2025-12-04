@@ -6,7 +6,7 @@ export class OrderController{
 
   async findByUserId(req: Request, res: Response): Promise<void> {
     try {
-      const { userId } = req.params;
+      const userId = req.userId;
       if (!userId) {
         res.status(400).json({ message: "ID do usuário não fornecido!" });
         return; 
