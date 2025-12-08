@@ -39,13 +39,13 @@ model Product{
   imageUrl String
   stock Int
   promo Boolean @default(false)
-  cartItem CartItem?
+  cartItems CartItem[]
 }
 
 model CartItem{
   id String @id @default(auto()) @map ("_id") @db.ObjectId
   quantity Int
-  productId String @unique @db.ObjectId // verificar dps essa relação para tirar o unique
+  productId String @db.ObjectId
   product Product @relation(fields: [productId], references: [id])
   orderId String? @db.ObjectId
   order Order? @relation(fields: [orderId], references: [id])
