@@ -68,4 +68,15 @@ export class CartItemRepository {
       where: { userId: userId },
     });
   }
+
+  async findByCartIdAndProductId(cartId: string, productId: string): Promise<CartItem | null> {
+  return await prisma.cartItem.findFirst({
+    where: {
+      cartId: cartId,
+      productId: productId
+      }
+    });
+  }
+
+  
 }
