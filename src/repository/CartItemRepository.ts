@@ -78,5 +78,17 @@ export class CartItemRepository {
     });
   }
 
+  async findCartsByProductId(productId: string): Promise<{ cartId: string | null }[]> {
+    return await prisma.cartItem.findMany({
+      where: { 
+        productId: productId,
+        cartId: { not: null }
+      },
+      select: {
+        cartId: true
+      },
+      distinct: ['cartId']
+    });
+  }
   
 }

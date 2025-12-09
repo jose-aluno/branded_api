@@ -56,12 +56,19 @@ export class CartRepository {
     });
 
     const total = items.reduce((acc, item) => {
-      return acc + (item.product.price * item.quantity);
+      let unitPrice = item.product.price;
+      if (item.product.promo === true) {
+        unitPrice = unitPrice * 0.90;
+      }
+
+      return acc + (unitPrice * item.quantity);
     }, 0);
+
+    const roundedTotal = Math.round(total * 100) / 100;
 
     await prisma.cart.update({
       where: { id: cartId },
-      data: { totalValue: total }
+      data: { totalValue: roundedTotal }
     });
   }
 }
