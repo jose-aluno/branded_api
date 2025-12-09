@@ -34,6 +34,28 @@ export class OrderService {
 
     const result = await prisma.$transaction(async (tx) => {
       
+      for (const item of cart.items) {
+        const product = await tx.product.findUnique({
+          where: { id: item.productId }
+        });
+
+        if (!product) {
+          throw new Error(`Produto não encontrado: ${item.productId}`);
+        }
+        if (product.stock < item.quantity) {
+          throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}, Solicitado: ${item.quantity}`);
+        }
+
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: {
+              decrement: item.quantity
+            }
+          }
+        });
+      }
+
       const newOrder = await tx.order.create({
         data: {
           userId: userId,
@@ -44,8 +66,8 @@ export class OrderService {
       await tx.cartItem.updateMany({
         where: { cartId: cart.id },
         data: {
-          cartId: null,
-          orderId: newOrder.id
+          cartId: null,      
+          orderId: newOrder.id 
         }
       });
 
