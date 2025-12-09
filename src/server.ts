@@ -44,12 +44,13 @@ app.post("/branded/address", addressController.createAddress.bind(addressControl
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));
 
-app.get("/branded/cart/", authMiddleware, cartController.findByUserId.bind(cartController));
+app.get("/branded/cart", authMiddleware, cartController.findByUserId.bind(cartController));
 app.post("/branded/cart", authMiddleware, cartController.createCart.bind(cartController));
-app.put("/branded/cart/",authMiddleware, cartController.updateCart.bind(cartController));
+app.put("/branded/cart",authMiddleware, cartController.updateCart.bind(cartController));
 
 app.get("/branded/orders",authMiddleware, orderController.findByUserId.bind(orderController));
 app.post("/branded/orders",authMiddleware, orderController.createOrder.bind(orderController));
+app.post("/branded/checkout", authMiddleware, orderController.checkout.bind(orderController));
 
 app.get("/branded/cartItem",authMiddleware, cartItemController.findAll.bind(cartItemController));
 app.get("/branded/cartItem/:id",authMiddleware, cartItemController.findById.bind(cartItemController));
