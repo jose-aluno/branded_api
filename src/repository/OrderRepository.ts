@@ -12,7 +12,19 @@ export class OrderRepository {
   }
 
   async findByUserId(userId: string): Promise<Order[]> {
-    return await prisma.order.findMany({ where: { userId } });
+    return await prisma.order.findMany({ 
+      where: { userId },
+      include: {
+        items: {
+          include: {
+            product: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+     });
   }
 
   async createOrder(orderData: Prisma.OrderCreateInput): Promise<Order | null> {

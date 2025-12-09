@@ -19,10 +19,10 @@ export class AddressController {
     }
   }
 
-  async findById(req: Request, res: Response): Promise<void> {
+  async findByUserId(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      const address = await this.addressService.findById(id);
+      const { userId } = req.params;
+      const address = await this.addressService.findByUserId(userId);
       res.status(200).json(address);
     } catch (error: unknown) {
       let message = "Não foi possível encontrar endereço com esse id!";

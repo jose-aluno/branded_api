@@ -37,7 +37,7 @@ app.put("/branded/products/:id", productController.updateProduct.bind(productCon
 app.delete("/branded/products/:id", productController.deleteById.bind(productController));
 
 app.get("/branded/address", addressController.findAll.bind(addressController));
-app.get("/branded/address/:id", addressController.findById.bind(addressController));
+app.get("/branded/address/:userId", addressController.findByUserId.bind(addressController));
 app.post("/branded/address", addressController.createAddress.bind(addressController));
 app.put("/branded/address/:id", addressController.updateAddress.bind(addressController));
 app.delete("/branded/address/:id", addressController.deleteById.bind(addressController));

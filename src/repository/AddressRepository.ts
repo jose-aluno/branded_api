@@ -15,8 +15,8 @@ export class AddressRepository {
     return await prisma.address.findMany();
   }
 
-  async findById(id: string): Promise<Address | null> {
-    return await prisma.address.findUnique({where: {id}});
+  async findByUserId(userId: string): Promise<Address | null> {
+    return await prisma.address.findUnique({where: {userId}});
   }
 
   async createAddress(addressData: Prisma.AddressCreateInput): Promise<Address | null> {

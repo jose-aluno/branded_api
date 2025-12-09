@@ -8,9 +8,9 @@ export class AddressService {
     return await this.addressRepository.findAll();
   }
   
-  async findById(id: string | undefined): Promise<Address> {
-    this.validarId(id);
-    const address = await this.addressRepository.findById(id!);
+  async findByUserId(userId: string | undefined): Promise<Address> {
+    this.validarId(userId);
+    const address = await this.addressRepository.findByUserId(userId!);
 
     if(!address){
       throw new Error("Endereço não encontrado");
