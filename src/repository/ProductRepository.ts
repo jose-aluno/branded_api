@@ -1,8 +1,12 @@
 import { Prisma, Product } from "@prisma/client";
 import { prisma } from "../utils/prisma.js";
+import { CartRepository } from "./CartRepository.js";
+import { CartItemRepository } from "./CartItemRepository.js";
 
 export class ProductRepository {
   private static instance: ProductRepository;
+  private cartRepository = CartRepository.getInstance();
+  private cartItemRepository = CartItemRepository.getInstance();
 
   static getInstance(): ProductRepository {
     if (!this.instance) {
@@ -27,7 +31,17 @@ export class ProductRepository {
 
   async updateProduct(id: string, productData: Prisma.ProductUpdateInput): Promise<Product | null> {
     const updatedProduct = await prisma.product.update({ where: { id }, data: productData });
-    console.log("Produto atualizado com sucesso: ", updatedProduct);
+
+    const affectedCarts = await this.cartItemRepository.findCartsByProductId(id);
+
+    await Promise.all(
+      affectedCarts.map(async (item) => {
+        if (item.cartId) {
+          await this.cartRepository.recalculateTotal(item.cartId);
+        }
+      })
+    );
+
     return updatedProduct;
   }
 

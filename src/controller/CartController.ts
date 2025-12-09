@@ -7,7 +7,7 @@ export class CartController{
 
   async findByUserId(req: Request, res: Response): Promise<void> {
     try {
-      const { userId } = req.params;
+      const userId = req.userId;
       const cart = await this.cartService.findById(userId);
       res.status(200).json(cart);
     } catch (error: unknown) {
@@ -41,8 +41,8 @@ export class CartController{
 
   async updateCart(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      const cart = await this.cartService.updateCart(id, req.body);
+      const userId = req.userId;
+      const cart = await this.cartService.updateCartByUserId(userId, req.body);
       res.status(200).json({
         message: "Carrinho atualizado com sucesso!",
         cart: cart

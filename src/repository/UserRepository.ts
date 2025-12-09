@@ -19,6 +19,10 @@ export class UserRepository {
     return await prisma.user.findUnique({ where: { id } });
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return await prisma.user.findUnique({ where: { email } });
+  }
+
   async createUser(userData: Prisma.UserCreateInput): Promise<User | null> {
     const user = await prisma.user.create({ data: userData });
     console.log("Usuário criado com sucesso: ", user);

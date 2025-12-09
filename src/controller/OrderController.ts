@@ -6,7 +6,7 @@ export class OrderController{
 
   async findByUserId(req: Request, res: Response): Promise<void> {
     try {
-      const { userId } = req.params;
+      const userId = req.userId;
       if (!userId) {
         res.status(400).json({ message: "ID do usuário não fornecido!" });
         return; 
@@ -39,6 +39,29 @@ export class OrderController{
       res.status(400).json({
         message: message,
       });
+    }
+  }
+
+  async checkout(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+         res.status(401).json({ message: "Usuário não autenticado." });
+         return;
+      }
+
+      const order = await this.orderService.checkout(userId);
+
+      res.status(201).json({
+        message: "Pedido realizado com sucesso!",
+        order: order
+      });
+    } catch (error: unknown) {
+      let message = "Erro ao processar pedido.";
+      if (error instanceof Error){
+        message = error.message;
+      } 
+      res.status(400).json({ message });
     }
   }
 }

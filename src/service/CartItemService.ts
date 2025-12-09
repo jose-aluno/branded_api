@@ -1,47 +1,99 @@
 import { Prisma, CartItem } from "@prisma/client";
 import { CartItemRepository } from "../repository/CartItemRepository.js";
+import { CartRepository } from "../repository/CartRepository.js";
 
 export class CartItemService {
   private cartItemRepository = CartItemRepository.getInstance();
+  private cartRepository = CartRepository.getInstance();
 
-  async findAll(): Promise<CartItem[]> {
-    return await this.cartItemRepository.findAll();
+  async findAllByUserId(userId: string | undefined): Promise<CartItem[]> {
+    if (!userId) throw new Error("Usuário não identificado.");
+    return await this.cartItemRepository.findAllByUserId(userId);
   }
 
-  async findById(id: string | undefined): Promise<CartItem> {
+  async findById(id: string | undefined, userId: string | undefined): Promise<CartItem> {
     this.validarId(id);
-    const cartItem = await this.cartItemRepository.findById(id!);
+    if (!userId) throw new Error("Usuário não identificado.");
+
+    const cartItem = await this.cartItemRepository.findByIdAndUserId(id!, userId);
 
     if (!cartItem) {
-      throw new Error("Item do carrinho não encontrado");
+      throw new Error("Item do carrinho não encontrado ou acesso negado.");
     }
     return cartItem;
   }
 
-  async createCartItem(cartItemData: Prisma.CartItemCreateInput): Promise<CartItem | null> {
-    return await this.cartItemRepository.createCartItem(cartItemData);
-  }
+  async createCartItem(data: { productId: string; quantity: number; userId: string }): Promise<CartItem> {
+    if (!data.userId) throw new Error("Usuário não identificado.");
 
-  async updateCartItem(id: string | undefined, cartItemData: Prisma.CartItemUpdateInput): Promise<CartItem | null> {
-    this.validarId(id);
+    let cart = await this.cartItemRepository.findCartByUserId(data.userId);
 
-    const exists = await this.cartItemRepository.findById(id!);
-    if (!exists) {
-      throw new Error("Item do carrinho não encontrado");
+    if (!cart) {
+      cart = await this.cartItemRepository.createCartForUser(data.userId);
     }
 
-    return await this.cartItemRepository.updateCartItem(id!, cartItemData);
+    const existingItem = await this.cartItemRepository.findByCartIdAndProductId(cart.id, data.productId);
+
+   if (existingItem) {
+      const updatedItem = await this.cartItemRepository.updateCartItem(existingItem.id, {
+        quantity: existingItem.quantity + data.quantity
+      });
+
+      await this.cartRepository.recalculateTotal(cart.id);
+
+      return updatedItem;
+
+    } else {
+      const prismaData: Prisma.CartItemCreateInput = {
+        quantity: data.quantity,
+        cart: { connect: { id: cart.id } },
+        product: { connect: { id: data.productId } }
+      };
+      
+      const newItem = await this.cartItemRepository.createCartItem(prismaData);
+
+      await this.cartRepository.recalculateTotal(cart.id);
+
+      return newItem;
+    }
   }
 
-  async deleteById(id: string | undefined): Promise<CartItem | null> {
+  async updateCartItem(
+    id: string | undefined,
+    userId: string | undefined,
+    data: Prisma.CartItemUpdateInput
+  ): Promise<CartItem> {
     this.validarId(id);
+    if (!userId) throw new Error("Usuário não identificado.");
 
-    const exists = await this.cartItemRepository.findById(id!);
+    const exists = await this.cartItemRepository.findByIdAndUserId(id!, userId);
     if (!exists) {
-      throw new Error("Item do carrinho não encontrado");
+      throw new Error("Item não encontrado ou você não tem permissão para alterá-lo.");
     }
 
-    return await this.cartItemRepository.deleteById(id!);
+    const updatedItem = await this.cartItemRepository.updateCartItem(id!, data);
+    if (updatedItem.cartId) {
+        await this.cartRepository.recalculateTotal(updatedItem.cartId);
+    }
+    return updatedItem;
+  }
+
+ async deleteById(id: string | undefined, userId: string | undefined): Promise<CartItem> {
+    this.validarId(id);
+    if (!userId) throw new Error("Usuário não identificado.");
+    const itemToDelete = await this.cartItemRepository.findByIdAndUserId(id!, userId);
+    
+    if (!itemToDelete) {
+      throw new Error("Item não encontrado ou você não tem permissão para removê-lo.");
+    }
+    const cartId = itemToDelete.cartId;
+
+    const deletedItem = await this.cartItemRepository.deleteById(id!);
+    if (cartId) {
+      await this.cartRepository.recalculateTotal(cartId);
+    }
+
+    return deletedItem;
   }
 
   private validarId(id: string | undefined): void {

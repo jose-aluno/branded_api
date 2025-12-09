@@ -10,7 +10,7 @@ datasource db {
 model User {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   name  String
-  email String
+  email String @unique
   password String
   address Address?
   orders Order[]
@@ -38,13 +38,14 @@ model Product{
   price Float
   imageUrl String
   stock Int
-  cartItem CartItem?
+  promo Boolean @default(false)
+  cartItems CartItem[]
 }
 
 model CartItem{
   id String @id @default(auto()) @map ("_id") @db.ObjectId
   quantity Int
-  productId String @unique @db.ObjectId
+  productId String @db.ObjectId
   product Product @relation(fields: [productId], references: [id])
   orderId String? @db.ObjectId
   order Order? @relation(fields: [orderId], references: [id])

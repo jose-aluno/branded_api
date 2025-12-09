@@ -18,7 +18,7 @@ export class CartService {
     return await this.cartRepository.createCart(cartData);
   }
 
-  async updateCart(userId: string | undefined, cartData: Prisma.CartUpdateInput): Promise<Cart | null> {
+  async updateCartByUserId(userId: string | undefined, cartData: Prisma.CartUpdateInput): Promise<Cart | null> {
     this.validarId(userId);
 
     const exists = await this.cartRepository.findByUserId(userId!);
